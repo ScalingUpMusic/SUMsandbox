@@ -93,4 +93,15 @@ Re-run Spark shell and check test.txt
 	>>> textFile.count()
 	2
 
+# Million Song Data Set
 
+The million song data set uses HDF5 files. There is a python library "h5py" that handles those. Here is a link for using that library to turn .h5 files in to RDDs.
+
+https://hdfgroup.org/wp/2015/03/from-hdf5-datasets-to-apache-spark-rdds/
+
+(TODO: Later we could probably put all this in a Vagrant file to install on machine build)
+
+SO we need to install h5py, so we need to install pip
+
+	sudo apt-get install python-pip
+	pip install h5py

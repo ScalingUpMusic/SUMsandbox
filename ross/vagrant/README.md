@@ -104,4 +104,11 @@ https://hdfgroup.org/wp/2015/03/from-hdf5-datasets-to-apache-spark-rdds/
 SO we need to install h5py, so we need to install pip
 
 	sudo apt-get install python-pip
-	pip install h5py
+	sudo apt-get install python-dev
+	sudo pip imstall Cython
+	sudo pip install numpy
+
+After lots of trouble, I found that this works (at least it lets me import h5py in python now)
+
+	sudo apt-get install python-h5py
+

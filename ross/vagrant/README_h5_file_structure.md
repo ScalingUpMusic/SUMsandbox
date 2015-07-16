@@ -2,6 +2,9 @@
 
 I wrote a script that goes through an h5 file and gives a preview of what each element looks like. For objects with length > 10 I print ... then the toal number of items in the object.
 
+This link found by Chris is also a good reference:
+http://developer.echonest.com/docs/v4/_static/AnalyzeDocumentation.pdf
+
 	analysis
 	 bars_confidence
 	  0.029

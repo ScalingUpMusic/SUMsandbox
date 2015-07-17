@@ -84,13 +84,130 @@ As indicated by the ??? I don't know what the SO* ID's are. Gun to my head, I'd 
 
 # .db Files
 
-TODO, These are SQLite db's but I haven't looked at these yet...
+SQLite files. I added instructiones in the README for installing SQLlite, but it's super easy, so I'll repeat here:
+
+	sudo apt-get install sqlite3
+
+I wrote sqlite_test.py to get the tables in a db and print example rows with column names. You can find that below for each db in AdditionalFiles.
 
 ## subset_artist_similarity.db
 
+	##############################
+	Table: artists
+	['artist_id']
+	(u'AR009211187B989185',)
+	(u'AR00A6H1187FB5402A',)
+	(u'AR00LNI1187FB444A5',)
+	(u'AR00MBZ1187B9B5DB1',)
+	(u'AR01IP11187B9AF5D2',)
+	(u'AR01VU31187B997DA0',)
+	(u'AR01W2D1187FB5912F',)
+	(u'AR022JO1187B99587B',)
+	(u'AR02DB61187B9A0B5E',)
+	(u'AR02IU11187FB513F2',)
+
+	##############################
+	Table: similarity
+	['target', 'similar']
+	(u'AR009211187B989185', u'ARHINI31187B995C1D')
+	(u'AR009211187B989185', u'ARI0PUX1187FB3F215')
+	(u'AR009211187B989185', u'AR9RTS51187B996CC8')
+	(u'AR009211187B989185', u'ARS1DCR1187B9A4A56')
+	(u'AR009211187B989185', u'ARTPGR61187B98B0F6')
+	(u'AR009211187B989185', u'ARIYH1U1187B9AF8A3')
+	(u'AR009211187B989185', u'ARHB1961187B9B1732')
+	(u'AR009211187B989185', u'ARI4SKQ1187B9B43B0')
+	(u'AR009211187B989185', u'AR3OSJM1187B98B95B')
+	(u'AR009211187B989185', u'ARIRD6J1187FB5A98C')
+
 ## subset_artist_term.db
 
+	##############################
+	Table: artists
+	['artist_id']
+	(u'AR009211187B989185',)
+	(u'AR00A6H1187FB5402A',)
+	(u'AR00LNI1187FB444A5',)
+	(u'AR00MBZ1187B9B5DB1',)
+	(u'AR01IP11187B9AF5D2',)
+	(u'AR01VU31187B997DA0',)
+	(u'AR01W2D1187FB5912F',)
+	(u'AR022JO1187B99587B',)
+	(u'AR02DB61187B9A0B5E',)
+	(u'AR02IU11187FB513F2',)
+
+	##############################
+	Table: terms
+	['term']
+	(u'00s',)
+	(u'00s country',)
+	(u'00s pop',)
+	(u'1800s',)
+	(u'1910s',)
+	(u'1960s soul',)
+	(u'1970s soul',)
+	(u'19th century',)
+	(u'19th century classical',)
+	(u'19th century opera',)
+
+	##############################
+	Table: artist_term
+	['artist_id', 'term']
+	(u'AR009211187B989185', u'lovers rock')
+	(u'AR009211187B989185', u'reggae')
+	(u'AR009211187B989185', u'roots reggae')
+	(u'AR009211187B989185', u'uk garage')
+	(u'AR009211187B989185', u'ballad')
+	(u'AR009211187B989185', u'dancehall')
+	(u'AR009211187B989185', u'disco')
+	(u'AR009211187B989185', u'speed garage')
+	(u'AR009211187B989185', u'breakbeat')
+	(u'AR009211187B989185', u'dub')
+
+	##############################
+	Table: mbtags
+	['mbtag']
+	(u'00s',)
+	(u'1 13 165900 150 7672 22647 34612 48720 59280 74602 87545 95495 107182 131087 141522 153710',)
+	(u'1 7 186240 183 23558 41608 89158 111733 150833 169883',)
+	(u'10s',)
+	(u'1960s',)
+	(u'1970s',)
+	(u'1980s',)
+	(u'1990s',)
+	(u'2000s',)
+	(u'2005',)
+
+	##############################
+	Table: artist_mbtag
+	['artist_id', 'mbtag']
+	(u'AR00A6H1187FB5402A', u'detroit')
+	(u'AR00A6H1187FB5402A', u'punk')
+	(u'AR00A6H1187FB5402A', u'michigan')
+	(u'AR00A6H1187FB5402A', u'usa')
+	(u'AR01VU31187B997DA0', u'hard rock')
+	(u'AR01VU31187B997DA0', u'rock')
+	(u'AR01VU31187B997DA0', u'american')
+	(u'AR01W2D1187FB5912F', u'united states')
+	(u'AR022JO1187B99587B', u'production music')
+	(u'AR02IU11187FB513F2', u'jazz')
+
+
 ## subset_track_metadata.db
+
+	##############################
+	Table: songs
+	['track_id', 'title', 'song_id', 'release', 'artist_id', 'artist_mbid', 'artist_name', 'duration', 'artist_familiarity', 'artist_hotttnesss', 'year']
+	(u'TRACCVZ128F4291A8A', u'Deep Sea Creature', u'SOVLGJY12A8C13FBED', u'Call of the Mastodon', u'ARMQHX71187B9890D3', u'bc5e2ad6-0a4a-4d90-b911-e9a7e6861727', u'Mastodon', 280.21506, 0.780461748777, 0.574274730517, 2001)
+	(u'TRACCMH128F428E4CD', u'No Quieras Marcharte', u'SOGDQZK12A8C13F37C', u'Adelante', u'AR2PT4M1187FB55B1A', u'd54ea4a6-0b9c-4e47-bed0-289ae9ff4037', u'Los Chichos', 191.68608, 0.561589945857, 0.420570307208, 1984)
+	(u'TRACCSW128F148C7C3', u'If I...', u'SODMVJR12A6D4F985D', u'Ill Na Na', u'ARDI88R1187B98DAB2', u'fd87374e-ffde-4d36-89a8-8a073f795666', u'Foxy Brown', 222.92853, 0.687687485872, 0.406686099467, 0)
+	(u'TRACCXJ128F428F0CF', u"Werther - Lyric Drama in four Acts/Act I/Alors_ c'est bien ici la maison du bailli?", u'SOIWBDR12A8C13A4AC', u'Massenet: Werther', u'ARUKJUP12086C14589', u'8a5f2736-bcde-4a2e-8d50-72631d66a7ef', u'Ram\xf3n Vargas;Vladimir Jurowski', 278.38649, 0.391741394148, 0.291264811753, 0)
+	(u'TRACCVS12903D014F8', u'Ad Te Clamamus Exsvles Mortva Liberi', u'SOHCCIA12AC907577F', u'Pentagrammaton', u'ARZEWUR1187FB53DC8', u'0be59867-0da4-4e45-9b64-728cdf25487c', u'Enthroned', 89.15546, 0.59341604878, 0.395709547708, 2010)
+	(u'TRACCKS128F42B77AE', u'Murder One', u'SOBOAQC12A8C13E3E9', u'BTNHRESURRECTION', u'ARUZRFN1187B98AC05', u'2fa45bbb-0efb-4950-9d40-94bf23cbfec1', u'Bone Thugs-N-Harmony', 255.73832, 0.815923420344, 0.555138321923, 2000)
+	(u'TRACCQM12903CACC1E', u'On My Feet Again', u'SOKVLHX12AB0187B39', u'Utopia', u'ARHBWOZ1187FB3FD53', u'e6ff2839-5ccb-451b-b07e-f485bc143118', u'Utopia', 239.59465, 0.543936551885, 0.430300279108, 0)
+	(u'TRACCUS128F92E1FEB', u'Bedroom Acoustics', u'SOMMSMW12A8C13FCCC', u'Plug In Baby', u'ARR3ONV1187B9A2F59', u'fd857293-5ab8-40de-b29e-55a69d4e4d0f', u'Muse', 156.96934, 0.929030287441, 0.750426551019, 0)
+	(u'TRACCJA128F149A144', u'Segredo', u'SODPNJR12A6D4FA52D', u'Joao Voz E Violato', u'AR3THYK1187B999F1F', u'286ec4c2-b5ca-4f85-b331-280a6d73dd14', u'Jo\xe3o Gilberto', 197.19791, 0.645192338747, 0.471224329919, 2000)
+	(u'TRACCGB12903CD1B90', u'Sajana (Ft Faheem Mazhar)', u'SOFFLLP12AB018ED52', u'The Lost Souls Bonus EP', u'ARFELOH1187B991F95', u'65b785d9-499f-48e6-9063-3a1fd1bd488d', u'Niraj Chag', 262.5824, 0.495819328959, 0.34276521913, 0)
 
 
 # .h5 File

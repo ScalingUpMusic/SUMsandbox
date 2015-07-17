@@ -112,3 +112,13 @@ After lots of trouble, I found that this works (at least it lets me import h5py 
 
 	sudo apt-get install python-h5py
 
+
+## SQLite
+
+There are some SQLite databases in the AdditionalFiles directory of the MillionSongDataset.
+
+To install SQLlite
+
+	sudo apt-get install sqlite3
+
+This installs the sqlite3 command line interface, which also makes the sqlite3 python module available

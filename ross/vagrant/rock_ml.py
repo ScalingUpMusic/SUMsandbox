@@ -2,7 +2,7 @@ import sqlite3
 import random
 import h5py
 from pyspark.mllib.regression import LabeledPoint
-from pyspark.mllib.classification import NaiveBayes
+from pyspark.mllib.classification import NaiveBayes, LogisticRegressionWithSGD
 from pyspark.rddsampler import RDDSamplerBase
 
 class RDDRangeSampler(RDDSamplerBase):
@@ -30,22 +30,6 @@ def randomSplit(rdd, weights, seed=None):
 
 
 dbpath = '/vagrant/MillionSongSubset/AdditionalFiles/'
-
-# Get list of Artists
-## get from subset_artist_term.db (table = artists)
-dbname ='subset_artist_term.db'
-
-with sqlite3.connect(dbpath+dbname) as conn:
-	c = conn.cursor()
-	c.execute("SELECT artist_id FROM artists")
-	distTable = sc.parallelize(c.fetchall())
-
-# Split Artists in to test and train
-trainArtists, testArtists = randomSplit(distTable, [0.7, 0.3])
-
-trainArtists.take(3)
-testArtists.take(3)
-
 # Get list of songs with mbtags, artist, and independent vars
 
 ## Get artist mbtags from subset_artist_term.db (table = artist_mbtag)
@@ -57,8 +41,16 @@ with sqlite3.connect(dbpath+dbname) as conn:
 	artistTags = sc.parallelize(c.fetchall())
 
 
+# group tags by artist
+artistTagList = artistTags.groupByKey()
+artistTagList.take(3)
 
-artistTags.take(3)
+# check if rock in group tag or not
+artistRocks = artistTagList.map(lambda (ar, tags): (ar, float(sum(['rock' in tag for tag in tags]) > 0)))
+artistRocks.take(3)
+
+
+# merge song with artist
 
 ## Match artist to track using subset_track_metadata.db (table = songs)
 
@@ -66,19 +58,15 @@ dbname ='subset_track_metadata.db'
 
 with sqlite3.connect(dbpath+dbname) as conn:
 	c = conn.cursor()
-	c.execute("SELECT track_id, artist_id FROM songs")
+	c.execute("SELECT artist_id, track_id FROM songs")
 	trackArtist = sc.parallelize(c.fetchall())
 
 trackArtist.take(3)
 
-artistTrackTag = trackArtist.map(lambda (x,y): (y, x)).leftOuterJoin(artistTags)
-artistTrackTag.take(3)
+trackRocks = trackArtist.leftOuterJoin(artistRocks).map(lambda (ar, (tr, rocks)): (tr, rocks))
+trackRocks.take(3)
 
-#[
-# (u'AR6U6C51187B9B6F68', (u'TRASTIS128F92FA998', u'classical')),
-# (u'AR6U6C51187B9B6F68', (u'TRAGXBC128F148E5CC', u'classical')),
-# (u'ARZWK2R1187B98F09F', (u'TRARANL128F1478789', u'hardcore punk'))
-#]
+# get song data and merge
 
 ## Get song data from subset_msd_summary_file.h5[analysis][songs]
 file_name = 'subset_msd_summary_file.h5'
@@ -86,33 +74,27 @@ file_name = 'subset_msd_summary_file.h5'
 songData = sc.parallelize(list(h5py.File(dbpath+file_name, 'r')['analysis']['songs'][:])).map(lambda x: (x[30], (x[3], x[4], x[21], x[23], x[24], x[27], x[28])))
 songData.take(3)
 
-# 30 = track_id
-
-# 3 = duration
-# 4 = danceability
-# 21 = key
-# 23 = loudness
-# 24 = mode
-# 27 = tempo
-# 28 = time_signature
-
-# match track to song data
-allData = artistTrackTag.map(lambda (ar,(tr, tag)): (tr,(ar,tag))).leftOuterJoin(songData).map(lambda (tr, ((ar, tag),data)): (ar, (tr, tag, data)))
+allData = trackRocks.join(songData).map(lambda (tr, (rocks, data)): (tr, (0.0 if rocks is None else rocks, data)))
 allData.take(3)
 
-# filter all data on tags that contain the word rock
+# label data
+labeledData = allData.map(lambda (tr, (rocks, data)): LabeledPoint(rocks, [x for x in data]))
+labeledData.take(3)
 
-rockData = allData.filter(lambda (ar, (tr, tag, data)): if tag: 'rock' in tag)
-rockData.take(3)
+# split data
+trainData, testData = randomSplit(labeledData, [0.7, 0.3])
 
-# Split list of songs in to train and test based on Artists
-# Had a hard time doing this, just splitting songs for now:
-trainData, testData = randomSplit(allData.map(lambda (ar, (tr, tag, data)):(tag, data)), [0.7, 0.3])
-trainData.take(3)
-testData.take(3)
+# train model
+model = LogisticRegressionWithSGD.train(trainData)
 
-# Train Model
-model = NaiveBayes.train(trainData.map(lambda (tag,data): LabeledPoint(tag, [x for x in data])))
+# evaluate model
+labelsAndPreds = testData.map(lambda p: (p.label, model.predict(p.features)))
+trainErr = labelsAndPreds.filter(lambda (v, p): v != p).count() / float(testData.count())
+print("Test Error = " + str(trainErr))
 
-# Test Model
+
+
+
+
+
 

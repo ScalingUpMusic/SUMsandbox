@@ -1,5 +1,8 @@
 import sqlite3
 import random
+import h5py
+from pyspark.mllib.regression import LabeledPoint
+from pyspark.mllib.classification import NaiveBayes
 from pyspark.rddsampler import RDDSamplerBase
 
 class RDDRangeSampler(RDDSamplerBase):
@@ -77,13 +80,34 @@ artistTrackTag.take(3)
 # (u'ARZWK2R1187B98F09F', (u'TRARANL128F1478789', u'hardcore punk'))
 #]
 
-## Match track to song data in subset_msd_summary_file.h5[analysis][songs]
+## Match get song data from subset_msd_summary_file.h5[analysis][songs]
+file_name = 'subset_msd_summary_file.h5'
+#songData = sc.parallelize(list(h5py.File(dbpath+file_name, 'r')['analysis']['songs'][:]))
+songData = sc.parallelize(list(h5py.File(dbpath+file_name, 'r')['analysis']['songs'][:])).map(lambda x: (x[30], (x[3], x[4], x[21], x[23], x[24], x[27], x[28])))
+songData.take(3)
 
+# 30 = track_id
 
-# Flatten list of songs to repeat for each tag
+# 3 = duration
+# 4 = danceability
+# 21 = key
+# 23 = loudness
+# 24 = mode
+# 27 = tempo
+# 28 = time_signature
+
+# match track to song data
+allData = artistTrackTag.map(lambda (ar,(tr, tag)): (tr,(ar,tag))).leftOuterJoin(songData).map(lambda (tr, ((ar, tag),data)): (ar, (tr, tag, data)))
+allData.take(3)
 
 # Split list of songs in to train and test based on Artists
+# Had a hard time doing this, just splitting songs for now:
+trainData, testData = randomSplit(allData.map(lambda (ar, (tr, tag, data)):(tag, data)), [0.7, 0.3])
+trainData.take(3)
+testData.take(3)
 
 # Train Model
+model = NaiveBayes.train(trainData.map(lambda (tag,data): LabeledPoint(tag, [x for x in data])))
 
 # Test Model
+

@@ -112,6 +112,16 @@ After lots of trouble, I found that this works (at least it lets me import h5py 
 
 	sudo apt-get install python-h5py
 
+On my SoftLayer spark cluster
+
+	sudo yum install python-devel
+	sudo easy_install pip
+	yum group install "Development Tools"
+	whereis gcc
+	pip install Cython
+	pip install h5py
+	
+	
 
 ## SQLite
 
